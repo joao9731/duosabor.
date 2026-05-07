@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Duo Sabor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@1,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --vinho:    #6B1A1A;
+  --vinho-cla:#9B2D2D;
+  --bege:     #F5EDE0;
+  --bege-esc: #EAD7C0;
+  --preto:    #0D0D0D;
+  --branco:   #FFFDF8;
+  --texto:    #1E0A0A;
+  --cinza:    #888;
+  --verde:    #1e7e34;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bege);font-family:'Nunito',sans-serif;color:var(--texto);overflow-x:hidden;}
+
+/* HEADER */
+header{background:var(--preto);padding:1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.5);}
+.h-logo{line-height:1;}
+.h-duo{font-family:'Playfair Display',serif;font-weight:900;font-size:1.5rem;color:var(--branco);letter-spacing:-1px;display:block;}
+.h-sab{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--vinho-cla);display:block;margin-top:-3px;}
+.cart-btn{background:var(--vinho);color:var(--branco);border:none;border-radius:50px;padding:.55rem 1.1rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.5rem;position:relative;font-size:.9rem;}
+#badgeCount{background:var(--branco);color:var(--vinho);font-size:.68rem;font-weight:800;border-radius:50%;width:19px;height:19px;display:flex;align-items:center;justify-content:center;position:absolute;top:-5px;right:-5px;}
+
+/* HERO */
+.hero{background:var(--preto);text-align:center;padding:2.8rem 1.5rem 2.2rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 65%,rgba(107,26,26,.5) 0%,transparent 58%),radial-gradient(ellipse at 78% 28%,rgba(107,26,26,.25) 0%,transparent 52%);}
+.hero h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(2.4rem,8vw,4rem);color:var(--branco);line-height:.95;position:relative;z-index:1;}
+.hero h1 em{color:var(--vinho-cla);font-style:italic;}
+.hero p{color:rgba(245,237,224,.4);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;margin-top:.8rem;position:relative;z-index:1;}
+.stripe{height:5px;background:linear-gradient(90deg,var(--preto),var(--vinho-cla),var(--vinho),var(--vinho-cla),var(--preto));}
+
+/* LAYOUT */
+main{max-width:1080px;margin:0 auto;padding:2rem 1.2rem;display:grid;grid-template-columns:1fr 320px;gap:1.8rem;align-items:start;}
+@media(max-width:780px){main{grid-template-columns:1fr;}.sidebar{display:none;}}
+
+/* SEÇÃO */
+.sec-label{font-size:.68rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--vinho);display:block;margin-top:1.8rem;margin-bottom:.3rem;}
+.sec-name{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;margin-bottom:.9rem;}
+
+/* CARD */
+.card{background:var(--branco);border-radius:14px;border:1.5px solid rgba(107,26,26,.1);padding:1.1rem 1.1rem 1.1rem 1.3rem;margin-bottom:.7rem;display:flex;align-items:center;gap:.9rem;transition:border-color .2s,box-shadow .2s;}
+.card:hover{border-color:var(--vinho);box-shadow:0 4px 18px rgba(107,26,26,.1);}
+.card.esgotado{opacity:.5;filter:grayscale(.8);pointer-events:none;}
+.card-left{flex:1;min-width:0;}
+.card-ico{font-size:1.5rem;display:block;margin-bottom:.2rem;}
+.card-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:.15rem;}
+.card-desc{font-size:.8rem;color:#7A5C3A;line-height:1.4;margin-bottom:.4rem;}
+.card-price{font-weight:800;color:var(--vinho);font-size:.9rem;margin-bottom:.3rem;}
+.card-right{display:flex;flex-direction:column;align-items:center;gap:.4rem;flex-shrink:0;}
+
+/* QUANTIDADE */
+.qty{display:flex;align-items:center;gap:.35rem;}
+.qty-btn{width:32px;height:32px;border-radius:50%;border:2px solid var(--vinho);background:transparent;color:var(--vinho);font-size:1.1rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;}
+.qty-btn:active{background:var(--vinho);color:var(--branco);}
+.qty-n{font-weight:800;font-size:1rem;min-width:20px;text-align:center;}
+.btn-add{background:var(--vinho);color:var(--branco);border:none;border-radius:8px;padding:.42rem .8rem;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;font-size:.8rem;transition:background .15s;}
+.btn-add:active{background:var(--vinho-cla);}
+.esgotado-tag{background:#aaa;color:#fff;border:none;border-radius:8px;padding:.42rem .8rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;}
+
+/* OBS */
+.obs-toggle{background:none;border:none;color:var(--cinza);font-size:.73rem;font-weight:700;cursor:pointer;text-decoration:underline;font-family:'Nunito',sans-serif;padding:0;}
+.obs-box{width:100%;margin-top:.4rem;border:1.5px solid rgba(107,26,26,.2);border-radius:8px;padding:.45rem .65rem;font-family:'Nunito',sans-serif;font-size:.8rem;resize:none;outline:none;background:var(--branco);color:var(--texto);display:none;}
+.obs-box.ab{display:block;}
+.obs-box:focus{border-color:var(--vinho);}
+
+/* SANDUÍCHE */
+.sw-card{background:var(--branco);border-radius:14px;border:1.5px solid rgba(107,26,26,.1);overflow:hidden;margin-bottom:.7rem;}
+.sw-card.esgotado{opacity:.5;filter:grayscale(.8);pointer-events:none;}
+.sw-top{display:flex;align-items:center;gap:.9rem;padding:1.1rem 1.1rem 1rem 1.3rem;}
+.sw-montar{background:none;border:1.5px solid rgba(107,26,26,.3);border-radius:8px;color:var(--vinho);font-size:.73rem;font-weight:700;text-transform:uppercase;padding:.32rem .65rem;cursor:pointer;white-space:nowrap;}
+.sw-body{border-top:1px solid rgba(107,26,26,.1);background:rgba(107,26,26,.02);padding:1rem 1.3rem 1.2rem;display:none;}
+.sw-body.ab{display:block;}
+.sw-sec{font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--vinho);margin-bottom:.5rem;display:block;}
+.chips{display:flex;flex-wrap:wrap;gap:.38rem;margin-bottom:1rem;}
+.chip-rm{background:var(--bege-esc);color:var(--texto);border:1.5px solid rgba(107,26,26,.15);border-radius:50px;padding:.28rem .72rem;font-size:.78rem;font-weight:700;cursor:pointer;}
+.chip-rm.ativo{background:rgba(107,26,26,.13);border-color:var(--vinho);color:var(--vinho);text-decoration:line-through;}
+.chip-add{background:var(--preto);color:var(--branco);border:1.5px solid transparent;border-radius:50px;padding:.28rem .72rem;font-size:.78rem;font-weight:700;cursor:pointer;}
+.chip-add.ativo{background:var(--vinho);border-color:var(--vinho-cla);}
+.sw-obs{width:100%;border:1.5px solid rgba(107,26,26,.2);border-radius:8px;padding:.5rem .7rem;font-family:'Nunito',sans-serif;font-size:.82rem;resize:none;outline:none;background:var(--branco);color:var(--texto);margin-bottom:.8rem;}
+.sw-obs:focus{border-color:var(--vinho);}
+.btn-sw{width:100%;background:var(--vinho);color:var(--branco);border:none;border-radius:10px;padding:.7rem;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;}
+.btn-sw:active{background:var(--vinho-cla);}
+
+/* SIDEBAR */
+.sidebar{background:var(--branco);border-radius:18px;border:1.5px solid rgba(107,26,26,.12);padding:1.4rem;position:sticky;top:76px;box-shadow:0 6px 30px rgba(13,13,13,.08);}
+.sb-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;margin-bottom:1rem;}
+.cart-vazio{text-align:center;color:var(--cinza);font-size:.85rem;padding:1.8rem 0;}
+.cart-vazio span{font-size:2.2rem;display:block;margin-bottom:.4rem;}
+.ci{border-bottom:1px solid rgba(107,26,26,.08);padding:.65rem 0;display:flex;align-items:flex-start;gap:.5rem;}
+.ci-info{flex:1;min-width:0;}
+.ci-nome{font-weight:700;font-size:.85rem;}
+.ci-det{font-size:.72rem;color:var(--cinza);line-height:1.4;margin-top:.15rem;word-break:break-word;}
+.ci-preco{font-weight:800;color:var(--vinho);font-size:.88rem;white-space:nowrap;}
+.ci-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:.8rem;padding:.1rem .25rem;}
+.ci-del:hover{color:var(--vinho);}
+.cart-total{border-top:2px solid rgba(107,26,26,.14);margin-top:.5rem;padding-top:.7rem;display:flex;justify-content:space-between;align-items:center;}
+.ct-label{font-weight:700;font-size:.88rem;}
+.ct-val{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;color:var(--vinho);}
+
+/* FORMULÁRIO */
+.form-box{margin-top:.9rem;background:rgba(107,26,26,.04);border-radius:12px;padding:.9rem;}
+.form-sec{font-size:.67rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--vinho);margin-bottom:.55rem;display:block;}
+.opts{display:flex;gap:.45rem;margin-bottom:.6rem;}
+.opt{flex:1;border:1.5px solid rgba(107,26,26,.2);border-radius:10px;padding:.55rem .3rem;text-align:center;cursor:pointer;font-size:.78rem;font-weight:700;background:var(--branco);transition:all .15s;}
+.opt span{font-size:1rem;display:block;margin-bottom:.1rem;}
+.opt.ativo{border-color:var(--vinho);background:rgba(107,26,26,.09);color:var(--vinho);}
+.campo{width:100%;border:1.5px solid rgba(107,26,26,.2);border-radius:9px;padding:.55rem .75rem;font-family:'Nunito',sans-serif;font-size:.85rem;outline:none;background:var(--branco);color:var(--texto);margin-bottom:.45rem;display:block;}
+.campo:focus{border-color:var(--vinho);}
+.entrega-aviso{background:rgba(107,26,26,.07);border:1px dashed rgba(107,26,26,.3);border-radius:8px;padding:.45rem .75rem;font-size:.72rem;color:var(--vinho);font-weight:700;margin-bottom:.45rem;}
+.btn-wpp{width:100%;margin-top:.8rem;background:var(--verde);color:var(--branco);border:none;border-radius:11px;padding:.8rem;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:background .2s;}
+.btn-wpp:active{background:#155724;}
+
+/* FAB */
+.fab{display:none;position:fixed;bottom:1.4rem;right:1.4rem;background:var(--vinho);color:var(--branco);border:none;border-radius:50px;padding:.7rem 1.3rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(107,26,26,.4);z-index:100;align-items:center;gap:.4rem;}
+@media(max-width:780px){.fab{display:flex;}}
+#fab-badge{background:rgba(255,255,255,.25);color:#fff;border-radius:50%;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(13,13,13,.65);z-index:200;align-items:flex-end;}
+.overlay.show{display:flex;}
+.modal{background:var(--branco);border-radius:20px 20px 0 0;padding:1.4rem;width:100%;max-height:88vh;overflow-y:auto;}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--cinza);}
+
+/* TOAST */
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--preto);color:var(--branco);padding:.6rem 1.4rem;border-radius:50px;font-size:.82rem;font-weight:700;z-index:999;opacity:0;transition:all .28s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ADMIN */
+.adm-panel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:9999;overflow-y:auto;padding:1.5rem;}
+.adm-panel.show{display:block;}
+.adm-title{font-family:'Playfair Display',serif;font-size:1.4rem;color:#fff;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;}
+.adm-close{background:none;border:1px solid #444;color:#fff;border-radius:8px;padding:.4rem .9rem;cursor:pointer;font-size:.85rem;}
+.adm-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:1rem;margin-bottom:1.2rem;}
+.adm-card h4{color:var(--vinho-cla);font-size:.85rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:.8rem;}
+.adm-campo{width:100%;background:#111;border:1px solid #444;border-radius:8px;color:#fff;padding:.55rem .75rem;font-family:'Nunito',sans-serif;font-size:.85rem;outline:none;margin-bottom:.45rem;}
+.adm-campo:focus{border-color:var(--vinho-cla);}
+.adm-btn{width:100%;padding:.7rem;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;font-size:.9rem;}
+.adm-btn.verde{background:var(--verde);color:#fff;}
+.adm-btn.branco{background:#fff;color:var(--preto);margin-top:1rem;}
+.adm-item{background:#222;border:1px solid #333;border-radius:9px;padding:.7rem 1rem;margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
+.adm-item-nome{color:#fff;font-size:.85rem;font-weight:700;flex:1;}
+.adm-item-preco{color:var(--vinho-cla);font-size:.8rem;font-weight:700;margin-right:.5rem;}
+.adm-togbtn{border:none;border-radius:6px;padding:.28rem .65rem;font-size:.72rem;font-weight:800;cursor:pointer;}
+.adm-togbtn.on{background:rgba(30,126,52,.25);color:#4caf50;}
+.adm-togbtn.off{background:rgba(107,26,26,.3);color:var(--vinho-cla);}
+.adm-delbtn{background:rgba(220,53,69,.2);color:#dc3545;border:none;border-radius:6px;padding:.28rem .55rem;font-size:.72rem;font-weight:800;cursor:pointer;margin-left:.3rem;}
+
+.adm-login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;align-items:center;justify-content:center;padding:1.5rem;}
+.adm-login-overlay.show{display:flex;}
+.adm-login-box{background:#1a1a1a;border:1px solid #444;border-radius:16px;padding:2rem;width:100%;max-width:320px;text-align:center;}
+.adm-login-title{color:#fff;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;margin-bottom:1.2rem;}
+.adm-login-input{width:100%;background:#111;border:1px solid #555;border-radius:9px;color:#fff;padding:.7rem 1rem;font-family:'Nunito',sans-serif;font-size:1rem;outline:none;margin-bottom:.7rem;text-align:center;letter-spacing:3px;}
+.adm-login-input:focus{border-color:var(--vinho-cla);}
+.adm-login-btn{width:100%;padding:.7rem;background:var(--vinho);color:#fff;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;cursor:pointer;margin-bottom:.5rem;}
+.adm-login-cancel{background:none;border:none;color:#666;font-family:'Nunito',sans-serif;font-size:.82rem;cursor:pointer;text-decoration:underline;}
+.adm-erro{color:#ff6b6b;font-size:.8rem;margin-bottom:.5rem;display:none;}
+/* FOOTER */
+footer{background:var(--preto);padding:2.5rem 1.5rem;text-align:center;cursor:default;user-select:none;}
+.ft-duo{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--branco);}
+.ft-sab{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;color:var(--vinho-cla);display:block;}
+.ft-ig{display:inline-flex;align-items:center;gap:.4rem;background:rgba(107,26,26,.2);border:1px solid rgba(107,26,26,.4);border-radius:50px;padding:.4rem 1.1rem;color:var(--vinho-cla);font-size:.8rem;font-weight:700;text-decoration:none;margin-top:.9rem;}
+.ft-copy{color:rgba(245,237,224,.15);font-size:.67rem;margin-top:1.2rem;}
+</style>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="h-logo">
+    <span class="h-duo">DUO</span>
+    <span class="h-sab">Sabor</span>
+  </div>
+  <button class="cart-btn" onclick="abrirModal()">
+    🛒 Carrinho
+    <span id="badgeCount">0</span>
+  </button>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Faça seu<br><em>Pedido</em></h1>
+  <p>Monte do seu jeito · Entrega ou retirada</p>
+</div>
+<div class="stripe"></div>
+
+<!-- MAIN -->
+<main>
+  <!-- CARDÁPIO (renderizado via JS) -->
+  <div id="cardapio"></div>
+
+  <!-- SIDEBAR DESKTOP -->
+  <div class="sidebar">
+    <div class="sb-title">🛒 Seu Pedido</div>
+    <div id="sb-itens"></div>
+    <div id="sb-footer"></div>
+  </div>
+</main>
+
+<!-- FOOTER (5 cliques = admin) -->
+<footer>
+  <div class="ft-duo">DUO</div>
+  <span class="ft-sab">Sabor</span>
+  <a class="ft-ig" href="https://instagram.com/duosabor.of" target="_blank">📸 @duosabor.of</a>
+  <p class="ft-copy" onclick="cliqueAdmin()" style="cursor:default;">© 2026 Duo Sabor</p>
+</footer>
+
+<!-- FAB MOBILE -->
+<button class="fab" onclick="abrirModal()">
+  🛒 Ver Pedido <span id="fab-badge">0</span>
+</button>
+
+<!-- MODAL MOBILE -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)fecharModal()">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="fecharModal()">✕</button>
+    <div class="sb-title">🛒 Seu Pedido</div>
+    <div id="modal-itens"></div>
+    <div id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- PAINEL ADMIN -->
+<div class="adm-panel" id="admPanel">
+  <div class="adm-title">
+    ⚙️ Painel Admin
+    <button class="adm-close" onclick="fecharAdmin()">CONCLUIR ✓</button>
+  </div>
+
+  <!-- Adicionar produto -->
+  <div class="adm-card">
+    <h4>➕ Novo Item</h4>
+    <input class="adm-campo" id="adm-nome"  placeholder="Nome do item (ex: Bolo de Chocolate)">
+    <input class="adm-campo" id="adm-preco" placeholder="Preço (ex: 8.00)" type="number" step="0.5" min="0">
+    <input class="adm-campo" id="adm-desc"  placeholder="Descrição curta">
+    <select class="adm-campo" id="adm-cat">
+      <option value="Bolos (fatia)">🍰 Bolos (fatia)</option>
+      <option value="Irresistível">🍫 Irresistível (Brownies etc.)</option>
+      <option value="Pratos Quentes">🍲 Pratos Quentes</option>
+    </select>
+    <button class="adm-btn verde" onclick="admAdicionar()">ADICIONAR AO CARDÁPIO</button>
+  </div>
+
+  <!-- Lista de produtos -->
+  <div class="adm-card">
+    <h4>📋 Gerenciar Itens</h4>
+    <div id="adm-lista"></div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="adm-login-overlay" id="admLogin">
+  <div class="adm-login-box">
+    <div class="adm-login-title">🔒 Admin</div>
+    <input class="adm-login-input" type="password" id="admSenhaInput" placeholder="••••••" onkeydown="if(event.key==='Enter')admVerificar()">
+    <div class="adm-erro" id="admErro">Senha incorreta!</div>
+    <button class="adm-login-btn" onclick="admVerificar()">ENTRAR</button>
+    <button class="adm-login-cancel" onclick="fecharAdmLogin()">Cancelar</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════
+// FIREBASE CONFIG
+// ═══════════════════════════════════
+var firebaseConfig = {
+  apiKey: "AIzaSyB_wRzmox69flWh4b9L7Jlxfbbre_YznyA",
+  authDomain: "duo-sabor.firebaseapp.com",
+  databaseURL: "https://duo-sabor-default-rtdb.firebaseio.com",
+  projectId: "duo-sabor",
+  storageBucket: "duo-sabor.firebasestorage.app",
+  messagingSenderId: "970779358803",
+  appId: "1:970779358803:web:ffb30a2db5a528000af8a6"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+// ═══════════════════════════════════
+// PRODUTOS PADRÃO (usados na 1ª vez)
+// ═══════════════════════════════════
+var PRODUTOS_DEFAULT = [
+  { id:'cenoura',  cat:'Bolos (fatia)',  ico:'🥕', nome:'Bolo de Cenoura com Chocolate', desc:'Fofinho com cobertura de chocolate.', preco:5,  ativo:true },
+  { id:'velvet',   cat:'Bolos (fatia)',  ico:'🎂', nome:'Red Velvet',                     desc:'Massa aveludada vermelha com cobertura cremosa.', preco:5,  ativo:true },
+  { id:'brownie',  cat:'Irresistível',   ico:'🍫', nome:'Brownie',                        desc:'Denso, úmido, crocante por fora e derretendo por dentro.', preco:3,  ativo:true },
+  { id:'sopa',     cat:'Pratos Quentes', ico:'🍵', nome:'Sopa Caseira',                   desc:'Sopa quentinha feita com muito carinho.', preco:8,  ativo:true },
+  { id:'creme',    cat:'Pratos Quentes', ico:'🍗', nome:'Creme de Galinha',               desc:'Frango desfiado cremoso com temperos especiais.', preco:10, ativo:true },
+];
+
+// ═══════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════
+var produtos = [];
+var SW_ATIVO  = true;
+var carrinho  = [], proxId = 0, swQty = 1;
+var modo = 'retirada', pag = 'pix';
+var sNome = '', sEnd = '', sTroco = '';
+var qtds  = {};
+var WPP   = '5588997910595';
+
+// ═══════════════════════════════════
+// FIREBASE — ESCUTAR PRODUTOS EM TEMPO REAL
+// ═══════════════════════════════════
+function iniciarFirebase() {
+  db.ref('cardapio').on('value', function(snap) {
+    var data = snap.val();
+    if (!data) {
+      // Primeira vez: salvar produtos padrão no Firebase
+      var obj = {};
+      PRODUTOS_DEFAULT.forEach(function(p) { obj[p.id] = p; });
+      db.ref('cardapio').set(obj);
+      db.ref('sanduiche').set({ ativo: true });
+    } else {
+      produtos = Object.values(data);
+    }
+    renderCardapio();
+  });
+
+  db.ref('sanduiche').on('value', function(snap) {
+    var data = snap.val();
+    if (data !== null) SW_ATIVO = data.ativo !== false;
+    renderCardapio();
+  });
+}
+
+// ═══════════════════════════════════
+// SALVAR NO FIREBASE
+// ═══════════════════════════════════
+function fbSalvarProduto(p) {
+  db.ref('cardapio/' + p.id).set(p);
+}
+function fbSalvarSW(ativo) {
+  db.ref('sanduiche').set({ ativo: ativo });
+}
+function fbDeletarProduto(id) {
+  db.ref('cardapio/' + id).remove();
+}
+function fbAdicionarProduto(p) {
+  db.ref('cardapio/' + p.id).set(p);
+}
+
+// ═══════════════════════════════════
+// RENDER CARDÁPIO
+// ═══════════════════════════════════
+var CATS = ['Bolos (fatia)', 'Irresistível', 'Pratos Quentes'];
+
+function renderCardapio() {
+  var c = document.getElementById('cardapio');
+  if (!c) return;
+  var html = '';
+
+  CATS.forEach(function(cat) {
+    var itens = produtos.filter(function(p){ return p.cat === cat; });
+    if (!itens.length) return;
+    html += '<span class="sec-label">' + cat + '</span>';
+    html += '<div class="sec-name">' + cat + '</div>';
+    itens.forEach(function(p) {
+      var ea = p.ativo ? '' : ' esgotado';
+      html +=
+        '<div class="card' + ea + '">' +
+          '<div class="card-left">' +
+            '<span class="card-ico">' + p.ico + '</span>' +
+            '<div class="card-name">' + p.nome + '</div>' +
+            '<div class="card-desc">' + p.desc + '</div>' +
+            '<div class="card-price">R$ ' + Number(p.preco).toFixed(2).replace('.',',') +
+              (p.cat==='Bolos (fatia)'?' / fatia':p.cat==='Irresistível'?' / un.':'') + '</div>' +
+            (p.ativo
+              ? '<button class="obs-toggle" onclick="abrirObs('obs-'+p.id+'',this)">+ Observação</button>' +
+                '<textarea class="obs-box" id="obs-'+p.id+'" rows="2" placeholder="Observações..."></textarea>'
+              : '') +
+          '</div>' +
+          '<div class="card-right">' +
+            (p.ativo
+              ? '<div class="qty">' +
+                  '<button class="qty-btn" onclick="mQty(''+p.id+'',-1)">−</button>' +
+                  '<span class="qty-n" id="n-'+p.id+'">0</span>' +
+                  '<button class="qty-btn" onclick="mQty(''+p.id+'',1)">+</button>' +
+                '</div>' +
+                '<button class="btn-add" onclick="addItem(''+p.id+'',''+p.nome.replace(/'/g,"\'")+'',' + Number(p.preco) + ','obs-'+p.id+'')">Adicionar</button>'
+              : '<span class="esgotado-tag">ESGOTADO</span>') +
+          '</div>' +
+        '</div>';
+    });
+  });
+
+  // SANDUÍCHE
+  var sea = SW_ATIVO ? '' : ' esgotado';
+  html += '<span class="sec-label">Nosso Especial</span>';
+  html += '<div class="sec-name">Sanduíche Duo</div>';
+  html +=
+    '<div class="sw-card' + sea + '">' +
+      '<div class="sw-top">' +
+        '<div class="card-left">' +
+          '<span class="card-ico">🍔</span>' +
+          '<div class="card-name">Sanduíche Duo</div>' +
+          '<div class="card-desc">Hambúrguer · Alface · Tomate · Pão bola · Maionese · Ketchup · Queijo · Presunto</div>' +
+          '<div class="card-price">R$ 8,00 <span style="font-size:.75rem;color:var(--cinza);font-weight:600">+ R$2 por adicional</span></div>' +
+        '</div>' +
+        '<div class="card-right">' +
+          '<div class="qty"><button class="qty-btn" onclick="mSwQty(-1)">−</button><span class="qty-n" id="sw-n">1</span><button class="qty-btn" onclick="mSwQty(1)">+</button></div>' +
+          (SW_ATIVO
+            ? '<button class="sw-montar" onclick="toggleSw()">Montar ▾</button>'
+            : '<span class="esgotado-tag">ESGOTADO</span>') +
+        '</div>' +
+      '</div>' +
+      '<div class="sw-body" id="sw-body">' +
+        '<span class="sw-sec">🚫 TIRAR INGREDIENTES</span>' +
+        '<div class="chips">' +
+          '<button class="chip-rm" onclick="this.classList.toggle('ativo')">✕ Hambúrguer</button>' +
+          '<button class="chip-rm" onclick="this.classList.toggle('ativo')">✕ Alface</button>' +
+          '<button class="chip-rm" onclick="this.classList.toggle('ativo')">✕ Tomate</button>' +
+          '<button class="chip-rm" onclick="this.classList.toggle('ativo')">✕ Maionese</button>' +
+          '<button class="chip-rm" onclick="this.classList.toggle('ativo')">✕ Ketchup</button>' +
+          '<button class="chip-rm" onclick="this.classList.toggle('ativo')">✕ Queijo</button>' +
+          '<button class="chip-rm" onclick="this.classList.toggle('ativo')">✕ Presunto</button>' +
+        '</div>' +
+        '<span class="sw-sec">➕ ADICIONAIS (+R$2 cada)</span>' +
+        '<div class="chips">' +
+          '<button class="chip-add" onclick="this.classList.toggle('ativo')">🍔 Hambúrguer extra</button>' +
+          '<button class="chip-add" onclick="this.classList.toggle('ativo')">🍗 Frango</button>' +
+          '<button class="chip-add" onclick="this.classList.toggle('ativo')">🌶️ Calabresa</button>' +
+          '<button class="chip-add" onclick="this.classList.toggle('ativo')">🍳 Ovo</button>' +
+        '</div>' +
+        '<span class="sw-sec">📝 OBSERVAÇÃO</span>' +
+        '<textarea class="sw-obs" id="sw-obs" rows="2" placeholder="Ex: sem sal, bem passado..."></textarea>' +
+        '<button class="btn-sw" onclick="addSanduiche()">🛒 Adicionar ao Carrinho</button>' +
+      '</div>' +
+    '</div>';
+
+  c.innerHTML = html;
+}
+
+// ═══════════════════════════════════
+// AÇÕES DO CARDÁPIO
+// ═══════════════════════════════════
+function abrirObs(id, btn) {
+  var el = document.getElementById(id);
+  var ab = el.classList.toggle('ab');
+  btn.textContent = ab ? '− Observação' : '+ Observação';
+}
+function mQty(id, d) {
+  qtds[id] = Math.max(0, (qtds[id]||0) + d);
+  var el = document.getElementById('n-'+id);
+  if (el) el.textContent = qtds[id];
+}
+function mSwQty(d) {
+  swQty = Math.max(1, swQty + d);
+  var el = document.getElementById('sw-n');
+  if (el) el.textContent = swQty;
+}
+function toggleSw() {
+  document.getElementById('sw-body').classList.toggle('ab');
+}
+
+function addItem(id, nome, preco, obsId) {
+  var q = qtds[id] || 0;
+  if (q === 0) { toast('Escolha a quantidade!'); return; }
+  var obs = document.getElementById(obsId) ? document.getElementById(obsId).value.trim() : '';
+  var ex  = carrinho.find(function(i){ return i.nome===nome && i.obs===obs; });
+  if (ex) { ex.qty += q; }
+  else { carrinho.push({ id:proxId++, nome:nome, preco:preco, qty:q, obs:obs, det:'' }); }
+  qtds[id] = 0;
+  var nel = document.getElementById('n-'+id);
+  if (nel) nel.textContent = 0;
+  if (document.getElementById(obsId)) document.getElementById(obsId).value = '';
+  renderCarrinho();
+  toast(q + 'x ' + nome + ' adicionado! 🛒');
+}
+
+function addSanduiche() {
+  var rm = [], ad = [];
+  document.querySelectorAll('#sw-body .chip-rm.ativo').forEach(function(b){ rm.push(b.textContent.replace('✕','').trim()); });
+  document.querySelectorAll('#sw-body .chip-add.ativo').forEach(function(b){ ad.push(b.textContent.trim()); });
+  var obs   = document.getElementById('sw-obs').value.trim();
+  var preco = 8 + (ad.length * 2);
+  var det   = '';
+  if (rm.length) det += '🚫 Sem: ' + rm.join(', ') + '.';
+  if (ad.length) det += (det?' ':'') + '➕ Add (' + ad.length + 'x+R$2): ' + ad.join(', ') + '.';
+  if (obs)       det += (det?' ':'') + '📝 ' + obs;
+  var qtdS  = swQty;
+  var ex    = carrinho.find(function(i){ return i.nome==='Sanduíche Duo' && i.preco===preco && i.det===det; });
+  if (ex) { ex.qty += qtdS; }
+  else { carrinho.push({ id:proxId++, nome:'Sanduíche Duo', preco:preco, qty:qtdS, obs:'', det:det }); }
+  document.querySelectorAll('#sw-body .chip-rm.ativo, #sw-body .chip-add.ativo').forEach(function(b){ b.classList.remove('ativo'); });
+  document.getElementById('sw-obs').value = '';
+  swQty = 1;
+  if (document.getElementById('sw-n')) document.getElementById('sw-n').textContent = 1;
+  document.getElementById('sw-body').classList.remove('ab');
+  renderCarrinho();
+  toast(qtdS + 'x Sanduíche Duo adicionado! 🍔');
+}
+
+// ═══════════════════════════════════
+// CARRINHO
+// ═══════════════════════════════════
+function remover(id) {
+  carrinho = carrinho.filter(function(i){ return i.id !== id; });
+  renderCarrinho();
+}
+function setModo(m)  { lerCampos(); modo = m; renderCarrinho(); }
+function setPag(p)   { lerCampos(); pag  = p; sTroco = ''; renderCarrinho(); }
+function setTroco(v) { sTroco = v; renderCarrinho(); }
+
+function lerCampos() {
+  var mapa = { nome:'sNome', end:'sEnd' };
+  Object.keys(mapa).forEach(function(k) {
+    ['inp-'+k, 'inp-m-'+k].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && el.value.trim()) window[mapa[k]] = el.value.trim();
+    });
+  });
+  ['inp-troco','inp-m-troco'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el && el.value.trim()) sTroco = el.value.trim();
+  });
+}
+
+function renderCarrinho() {
+  var total = carrinho.reduce(function(s,i){ return s + i.preco * i.qty; }, 0);
+  var count = carrinho.reduce(function(s,i){ return s + i.qty; }, 0);
+  document.getElementById('badgeCount').textContent = count;
+  document.getElementById('fab-badge').textContent  = count;
+
+  var itensHtml = '';
+  if (carrinho.length === 0) {
+    itensHtml = '<div class="cart-vazio"><span>🛍️</span>Carrinho vazio.<br>Escolha seus itens!</div>';
+  } else {
+    carrinho.forEach(function(i) {
+      itensHtml +=
+        '<div class="ci">' +
+          '<div class="ci-info">' +
+            '<div class="ci-nome">' + i.qty + 'x ' + i.nome + '</div>' +
+            (i.det ? '<div class="ci-det">' + i.det + '</div>' : '') +
+            (i.obs ? '<div class="ci-det">📝 ' + i.obs + '</div>' : '') +
+          '</div>' +
+          '<span class="ci-preco">R$ ' + (i.preco*i.qty).toFixed(2).replace('.',',') + '</span>' +
+          '<button class="ci-del" onclick="remover(' + i.id + ')">✕</button>' +
+        '</div>';
+    });
+  }
+
+  var footHtml = '';
+  if (carrinho.length > 0) {
+    footHtml =
+      '<div class="cart-total"><span class="ct-label">Total</span><span class="ct-val">R$ ' + total.toFixed(2).replace('.',',') + '</span></div>' +
+      '<div class="form-box">' +
+        '<span class="form-sec">📦 ENTREGA OU RETIRADA?</span>' +
+        '<div class="opts">' +
+          '<div class="opt' + (modo==='retirada'?' ativo':'') + '" onclick="setModo('retirada')"><span>🏃</span>Retirada</div>' +
+          '<div class="opt' + (modo==='entrega'?' ativo':'') + '" onclick="setModo('entrega')"><span>🛵</span>Entrega</div>' +
+        '</div>' +
+        (modo==='entrega'
+          ? '<input class="campo" id="inp-end" placeholder="Endereço completo 📍" value="' + sEnd.replace(/"/g,'&quot;') + '" oninput="sEnd=this.value">' +
+            '<div class="entrega-aviso">🛵 Taxa de entrega combinada via WhatsApp</div>'
+          : '') +
+        '<span class="form-sec">💳 FORMA DE PAGAMENTO</span>' +
+        '<div class="opts">' +
+          '<div class="opt' + (pag==='pix'?' ativo':'') + '" onclick="setPag('pix')"><span>💳</span>Pix</div>' +
+          '<div class="opt' + (pag==='dinheiro'?' ativo':'') + '" onclick="setPag('dinheiro')"><span>💵</span>Dinheiro</div>' +
+        '</div>' +
+        (pag==='dinheiro'
+          ? '<div class="opts">' +
+              '<div class="opt' + (sTroco==='nao'?' ativo':'') + '" onclick="setTroco('nao')"><span>✋</span>Sem troco</div>' +
+              '<div class="opt' + (sTroco!=='nao'?' ativo':'') + '" onclick="setTroco('sim')"><span>💵</span>Preciso de troco</div>' +
+            '</div>' +
+            (sTroco !== 'nao'
+              ? '<input class="campo" id="inp-troco" placeholder="Troco para quanto? 💵" oninput="sTroco=this.value">'
+              : '')
+          : '') +
+        '<span class="form-sec">👤 SEU NOME</span>' +
+        '<input class="campo" id="inp-nome" placeholder="Seu nome 😊" value="' + sNome.replace(/"/g,'&quot;') + '" oninput="sNome=this.value">' +
+      '</div>' +
+      '<button class="btn-wpp" onclick="enviarWpp()">' +
+        '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' +
+        ' Finalizar Pedido' +
+      '</button>';
+  }
+
+  document.getElementById('sb-itens').innerHTML  = itensHtml;
+  document.getElementById('sb-footer').innerHTML = footHtml;
+  document.getElementById('modal-itens').innerHTML  = itensHtml;
+  document.getElementById('modal-footer').innerHTML = footHtml
+    .replace(/id="inp-end"/g,   'id="inp-m-end"')
+    .replace(/id="inp-troco"/g, 'id="inp-m-troco"')
+    .replace(/id="inp-nome"/g,  'id="inp-m-nome"');
+}
+
+// ═══════════════════════════════════
+// WHATSAPP
+// ═══════════════════════════════════
+function enviarWpp() {
+  lerCampos();
+  if (carrinho.length === 0) { toast('Adicione itens!'); return; }
+  if (!sNome) { toast('Digite seu nome!'); return; }
+  if (modo === 'entrega' && !sEnd) { toast('Digite seu endereço!'); return; }
+
+  var total = carrinho.reduce(function(s,i){ return s + i.preco * i.qty; }, 0);
+  var m = '🍽️ *NOVO PEDIDO — DUO SABOR*
+━━━━━━━━━━━━━━━━━━━━━
+
+';
+  m += '👤 *Cliente:* ' + sNome + '
+
+';
+  m += '🛒 *ITENS:*
+';
+  carrinho.forEach(function(i) {
+    m += '• ' + i.qty + 'x ' + i.nome + ' — R$ ' + (i.preco*i.qty).toFixed(2).replace('.',',') + '
+';
+    if (i.det) m += '   ' + i.det + '
+';
+  });
+  m += '
+💰 *Total: R$ ' + total.toFixed(2).replace('.',',') + '*
+
+';
+  m += (modo==='entrega'
+    ? '🛵 *Tipo:* ENTREGA
+📍 *Endereço:* ' + sEnd + '
+💲 *Frete:* a combinar
+'
+    : '🏃 *Tipo:* RETIRADA
+');
+  m += '💳 *Pagamento:* ' + (pag==='pix' ? 'PIX' : 'DINHEIRO');
+  if (pag==='dinheiro') {
+    if (sTroco==='nao') m += ' (sem troco)';
+    else if (sTroco && sTroco!=='sim') m += ' (troco p/ R$ ' + sTroco + ')';
+  }
+  m += '
+━━━━━━━━━━━━━━━━━━━━━';
+
+  window.open('https://api.whatsapp.com/send?phone=' + WPP + '&text=' + encodeURIComponent(m), '_blank');
+
+  setTimeout(function() {
+    carrinho = []; sNome = ''; sEnd = ''; sTroco = '';
+    modo = 'retirada'; pag = 'pix';
+    renderCarrinho();
+    fecharModal();
+    toast('Pedido enviado! ✅');
+  }, 800);
+}
+
+// ═══════════════════════════════════
+// MODAL
+// ═══════════════════════════════════
+function abrirModal()  { renderCarrinho(); document.getElementById('overlay').classList.add('show'); }
+function fecharModal() { document.getElementById('overlay').classList.remove('show'); }
+
+// ═══════════════════════════════════
+// TOAST
+// ═══════════════════════════════════
+var toastT;
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(function(){ el.classList.remove('show'); }, 2600);
+}
+
+// ═══════════════════════════════════
+// ADMIN — clique no © 2026 Duo Sabor
+// ═══════════════════════════════════
+function cliqueAdmin() {
+  document.getElementById('admLogin').classList.add('show');
+  setTimeout(function(){ document.getElementById('admSenhaInput').focus(); }, 100);
+}
+function admVerificar() {
+  var s = document.getElementById('admSenhaInput').value;
+  if (s === 'duo99') {
+    document.getElementById('admLogin').classList.remove('show');
+    document.getElementById('admSenhaInput').value = '';
+    abrirAdmin();
+  } else {
+    document.getElementById('admErro').style.display = 'block';
+    document.getElementById('admSenhaInput').value = '';
+  }
+}
+function fecharAdmLogin() {
+  document.getElementById('admLogin').classList.remove('show');
+  document.getElementById('admSenhaInput').value = '';
+  document.getElementById('admErro').style.display = 'none';
+}
+
+function abrirAdmin() {
+  renderAdmLista();
+  document.getElementById('admPanel').classList.add('show');
+}
+function fecharAdmin() {
+  document.getElementById('admPanel').classList.remove('show');
+}
+
+function renderAdmLista() {
+  var lista = document.getElementById('adm-lista');
+  lista.innerHTML = '';
+
+  produtos.forEach(function(p) {
+    var row = document.createElement('div');
+    row.className = 'adm-item';
+    row.style.cssText = 'flex-wrap:wrap;gap:.4rem;';
+
+    var nome = document.createElement('span');
+    nome.className = 'adm-item-nome';
+    nome.textContent = p.ico + ' ' + p.nome;
+
+    var ctrl = document.createElement('div');
+    ctrl.style.cssText = 'display:flex;align-items:center;gap:.35rem;margin-left:auto;';
+
+    var rs = document.createElement('span');
+    rs.style.cssText = 'color:#aaa;font-size:.7rem;';
+    rs.textContent = 'R$';
+
+    var inp = document.createElement('input');
+    inp.type = 'number'; inp.step = '0.5'; inp.min = '0'; inp.value = p.preco;
+    inp.style.cssText = 'width:60px;background:#111;border:1px solid #555;border-radius:6px;color:#fff;padding:.25rem .4rem;font-size:.82rem;outline:none;';
+    inp.onchange = (function(prod){ return function(){ admPreco(prod, this.value); }; })(p);
+
+    var tog = document.createElement('button');
+    tog.className = 'adm-togbtn ' + (p.ativo ? 'on' : 'off');
+    tog.textContent = p.ativo ? '✅' : '❌';
+    tog.onclick = (function(prod){ return function(){ admToggle(prod); }; })(p);
+
+    var del = document.createElement('button');
+    del.className = 'adm-delbtn';
+    del.textContent = '🗑️';
+    del.onclick = (function(pid){ return function(){ admDel(pid); }; })(p.id);
+
+    ctrl.appendChild(rs); ctrl.appendChild(inp); ctrl.appendChild(tog); ctrl.appendChild(del);
+    row.appendChild(nome); row.appendChild(ctrl);
+    lista.appendChild(row);
+  });
+
+  // Sanduíche
+  var swRow  = document.createElement('div');
+  swRow.className = 'adm-item';
+  swRow.style.cssText = 'flex-wrap:wrap;gap:.4rem;';
+  var swNome = document.createElement('span');
+  swNome.className = 'adm-item-nome';
+  swNome.textContent = '🍔 Sanduíche Duo (base R$ 8,00)';
+  var swCtrl = document.createElement('div');
+  swCtrl.style.cssText = 'display:flex;align-items:center;gap:.35rem;margin-left:auto;';
+  var swTog  = document.createElement('button');
+  swTog.className = 'adm-togbtn ' + (SW_ATIVO ? 'on' : 'off');
+  swTog.textContent = SW_ATIVO ? '✅' : '❌';
+  swTog.onclick = admToggleSW;
+  swCtrl.appendChild(swTog);
+  swRow.appendChild(swNome); swRow.appendChild(swCtrl);
+  lista.appendChild(swRow);
+}
+
+function admPreco(prod, val) {
+  var novo = parseFloat(val);
+  if (isNaN(novo) || novo < 0) return;
+  prod.preco = novo;
+  fbSalvarProduto(prod);
+  toast('Preço atualizado! ✅');
+}
+
+function admToggle(prod) {
+  prod.ativo = !prod.ativo;
+  fbSalvarProduto(prod);
+  toast((prod.ativo ? '✅ Ativado: ' : '⏸️ Pausado: ') + prod.nome);
+}
+
+function admToggleSW() {
+  SW_ATIVO = !SW_ATIVO;
+  fbSalvarSW(SW_ATIVO);
+  renderAdmLista();
+  toast(SW_ATIVO ? '✅ Sanduíche ativado!' : '⏸️ Sanduíche pausado!');
+}
+
+function admDel(id) {
+  if (!confirm('Remover este item?')) return;
+  fbDeletarProduto(id);
+  toast('Item removido!');
+}
+
+function admAdicionar() {
+  var nome  = document.getElementById('adm-nome').value.trim();
+  var preco = parseFloat(document.getElementById('adm-preco').value);
+  var desc  = document.getElementById('adm-desc').value.trim();
+  var cat   = document.getElementById('adm-cat').value;
+  if (!nome)        { toast('Digite o nome!'); return; }
+  if (isNaN(preco)) { toast('Digite o preço!'); return; }
+  if (!desc)        { toast('Digite a descrição!'); return; }
+  var icoMap = { 'Bolos (fatia)':'🍰', 'Irresistível':'🍫', 'Pratos Quentes':'🍲' };
+  var novo = { id:'item'+Date.now(), cat:cat, ico:icoMap[cat]||'🍴', nome:nome, desc:desc, preco:preco, ativo:true };
+  fbAdicionarProduto(novo);
+  document.getElementById('adm-nome').value  = '';
+  document.getElementById('adm-preco').value = '';
+  document.getElementById('adm-desc').value  = '';
+  toast(nome + ' adicionado! 🎉');
+}
+
+// INIT
+iniciarFirebase();
+renderCarrinho();
+</script>
+</body>
+</html>
